@@ -1,1 +1,1 @@
-MODEL = "llama2:chat"
+MODEL = "llama3"
