@@ -19,7 +19,7 @@ def search(payload: Query):
     return {"query": query, "response": response}
 
 
-@app.post("/pdf_search"
+@app.post("/pdf_search")
 def search(file: UploadFile = File(description="upload pdf file"), query: str = Form(...)):
     pdf_file = BytesIO(file.file.read())
     context = pdf_reader(pdf_file)

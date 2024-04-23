@@ -7,7 +7,7 @@ import pypdf
 from app.core.settings import MODEL
 from app.promt_template.template import template
 
-model = Ollama(model=MODEL)
+model = Ollama(model=MODEL, stop=['<|eot_id|>'])
 
 
 def get_response(query):
@@ -31,3 +31,6 @@ def summarizer(context, question):
     response = chain.invoke({"context": context, "question":
         question})
     return response
+
+
+print(model.invoke("tell me a joke"))
