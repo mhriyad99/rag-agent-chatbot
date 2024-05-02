@@ -1,8 +1,9 @@
-from typing import Annotated
 from io import BytesIO
 from fastapi import FastAPI, UploadFile, File, Form
 from app.schemas.schemas import Query
-from app.services.services import get_response, summarizer, pdf_reader
+from app.services.services import get_response, summarizer, pdf_reader, ielts_qa
+from app.services.doc_vectorstore import DocVectorStore
+DocVectorStore.create_store()
 
 app = FastAPI()
 
@@ -16,6 +17,13 @@ def hello():
 def search(payload: Query):
     query = payload.query
     response = get_response(query)
+    return {"query": query, "response": response}
+
+
+@app.post("/ielts-query")
+def search(payload: Query):
+    query = payload.query
+    response = ielts_qa(query)
     return {"query": query, "response": response}
 
 

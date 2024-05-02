@@ -8,22 +8,17 @@ from langchain_community.vectorstores import Chroma
 
 
 class DocVectorStore:
-    doc_store: Union[Callable[..., Chroma], None] = None
+    vector_store: Union[Callable[..., Chroma], None] = None
 
-    def __init__(self, path=DOC_PATH, chunk_size=500, chunk_overlap=50, embedding_model=MODEL):
-        self.path = path
-        self.chunk_size = chunk_size
-        self.chunk_overlap = chunk_overlap
-        self.embedding_model = embedding_model
-
-    def create_store(self):
-        loader = TextLoader(file_path=self.path)
+    @classmethod
+    def create_store(cls, path=DOC_PATH, chunk_size=500, chunk_overlap=50, embedding_model=MODEL):
+        loader = TextLoader(file_path=path)
         text = loader.load()
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=self.chunk_size,
-                                                       chunk_overlap=self.chunk_overlap)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size,
+                                                       chunk_overlap=chunk_overlap)
         splits = text_splitter.split_documents(text)
-        embeddings = OllamaEmbeddings(model=self.embedding_model)
+        embeddings = OllamaEmbeddings(model=embedding_model)
         vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
-        self.docstore = vectorstore
+        cls.vector_store = vectorstore
 
 
