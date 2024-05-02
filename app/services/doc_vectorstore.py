@@ -25,3 +25,5 @@ class DocVectorStore:
         embeddings = OllamaEmbeddings(model=self.embedding_model)
         vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
         self.docstore = vectorstore
+
+
