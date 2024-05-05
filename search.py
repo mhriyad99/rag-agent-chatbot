@@ -1,83 +1,81 @@
-import json
-from pprint import pprint
-import os
+from uuid import uuid4
 
-import urllib3
 from elasticsearch import Elasticsearch
+from langchain import hub
+from langchain.memory import ElasticsearchChatMessageHistory
+from langchain_community.document_loaders import TextLoader
 from langchain_community.embeddings import OllamaEmbeddings
-from app.core.settings import DOC_PATH, MODEL
-# from sentence_transformers import SentenceTransformer #"all-MiniLM-L6-v2"
+from langchain_community.llms.ollama import Ollama
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnablePassthrough, RunnableParallel
+from langchain_elasticsearch import ElasticsearchStore
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+embeddings = OllamaEmbeddings(model='llama3', base_url="http://35.209.146.25")
+
+ELASTIC_API_KEY = "T0w3blBJOEJVcjdaV3hZT3BtM1A6bXg1QjFjb1VSWmFEVGgycF9SMnlIZw=="
+
+client = Elasticsearch(cloud_id="test_rag:YXNpYS1zb3V0aDEuZ2NwLmVsYXN0aWMtY2xvdWQuY29tOjQ0MyQwMzQ1MmQ3MzY4YWQ0Nzk1OTJmNGM0NTgwODY4YzkyYSQ0ZDhlYmJmMzVkOTA0NzIxYjRjOGQxNDdlZTU2N2YyMw==",
+                       api_key=ELASTIC_API_KEY)
 
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+llm = Ollama(model="llama3", base_url="http://35.209.146.25", stop=['<|eot_id|>'])
+
+session_id = str(uuid4())
+chat_history = ElasticsearchChatMessageHistory(
+    es_connection=client,
+    session_id=session_id,
+    index="workplace-docs-chat-history",
+)
+
+loader = TextLoader(file_path='./sbd.txt')
+text = loader.load()
+
+docs = loader.load()
+
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+splits = text_splitter.split_documents(docs)
+# vector_store = ElasticsearchStore.from_documents(
+vector_store = ElasticsearchStore(
+    es_connection=client,
+    index_name="workplace-docs",
+    embedding=embeddings,
+)
+
+retriever = vector_store.as_retriever()
+prompt = hub.pull("rlm/rag-prompt")
 
 
-class Search:
-    def __init__(self):
-        self.model = OllamaEmbeddings(model=MODEL)
-        self.es = Elasticsearch("https://192.168.13.247:9200/",
-                                basic_auth=("elastic", "atkg49qNOB-0mvKyowqQ"),
-                                ca_certs="./http_ca.crt")
-        client_info = self.es.info()
-        print("Connected to Elasticsearch!")
-        pprint(client_info.body)
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
 
-    def create_index(self):
-        self.es.indices.delete(index="aws_book", ignore_unavailable=True)
-        self.es.indices.create(
-            index="context",
-            mappings={
-                "properties": {
-                    "embedding": {
-                        "type": "dense_vector",
-                    }
-                }
-            },
-        )
 
-    def get_embedding(self, text):
-        return self.model.encode(text)
+rag_chain_from_docs = (
+        RunnablePassthrough.assign(context=(lambda x: format_docs(x["context"])))
+        | prompt
+        | llm
+        | StrOutputParser()
+)
 
-    def insert_document(self, document):
-        return self.es.index(
-            index="context",
-            document={
-                **document,
-                "embedding": self.get_embedding(document["description"]),
-            },
-        )
+rag_chain_with_source = RunnableParallel(
+    {"context": retriever, "question": RunnablePassthrough()}
+).assign(answer=rag_chain_from_docs)
 
-    def insert_document_json(self, documents):
-        for document in documents:
-            self.insert_document(document)
-        print("done")
-
-    def insert_documents(self, documents):
-        operations = []
-        for document in documents:
-            operations.append({"index": {"_index": "context"}})
-            operations.append(
-                {
-                    **document,
-                    "embedding": self.get_embedding(document["description"]),
-                }
-            )
-        return self.es.bulk(index="context", operations=operations, refresh=True)
-
-    def reindex(self):
-        self.create_index()
-        with open("data.json", "rt") as f:
-            documents = json.loads(f.read())
-        return self.insert_documents(documents)
-
-    def reindex_json(self):
-        self.create_index()
-        with open("data1.json", "rt") as f:
-            documents = json.loads(f.read())
-        return self.insert_document_json(documents)
-
-    def search(self, **query_args):
-        return self.es.search(index="context", **query_args)
-
-    def retrieve_document(self, id):
-        return self.es.get(index="context", id=id)
+async def chat(msg, func=None):
+    print(msg)
+    output = {}
+    curr_key = None
+    for chunk in rag_chain_with_source.stream(msg):
+        for key in chunk:
+            print(key)
+            if key not in output:
+                output[key] = chunk[key]
+            else:
+                output[key] += chunk[key]
+            if  key == 'answer':
+                if key != curr_key:
+                    await func(chunk[key])
+                else:
+                    await func(chunk[key])
+            curr_key = key
+    await func("", active=False)
