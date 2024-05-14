@@ -5,7 +5,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.llms import Ollama
 import pypdf
 from app.core.settings import MODEL
-from app.promt_template.template import template
+from app.promt_templates.templates import template
 from app.services.vectorstore import DocVectorStore
 from app.services.utils import combine_docs
 
