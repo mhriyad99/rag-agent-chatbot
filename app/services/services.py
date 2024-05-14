@@ -9,11 +9,11 @@ from app.promt_template.template import template
 from app.services.vectorstore import DocVectorStore
 from app.services.utils import combine_docs
 
-model = Ollama(model=MODEL, stop=['<|eot_id|>'])
+llm = Ollama(model=MODEL, stop=['<|eot_id|>'])
 
 
 def get_response(query):
-    response = model.invoke(query)
+    response = llm.invoke(query)
     return response
 
 
@@ -29,19 +29,21 @@ def pdf_reader(pdf_file):
 def summarizer(context, question):
     prompt = PromptTemplate(input_variables=['context', 'question'], template=template)
     prompt.format(context="Here is the context", question="Here is a question")
-    chain = LLMChain(llm=model, prompt=prompt)
+    chain = LLMChain(llm=llm, prompt=prompt)
     response = chain.invoke({"context": context, "question":
         question})
     return response
 
 
 def ielts_qa(question):
-    retriever = DocVectorStore.vector_store.as_retriever()
+    DocVectorStore.load_store()
+    vectorstore = DocVectorStore.vector_store
+    retriever = vectorstore.as_retriever()
     retrieved_docs = retriever.invoke(question)
     context = combine_docs(retrieved_docs)
     prompt = PromptTemplate(input_variables=['context', 'question'], template=template)
     prompt.format(context="Here is the context", question="Here is a question")
-    chain = LLMChain(llm=model, prompt=prompt)
+    chain = prompt | llm
     response = chain.invoke({"context": context, "question":
         question})
     return response

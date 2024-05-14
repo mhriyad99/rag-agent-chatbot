@@ -1,6 +1,6 @@
 from typing import Union, Callable, Any
 
-from app.core.settings import DOC_PATH, MODEL
+from app.core.settings import DOC_PATH, MODEL, VECTOR_DB_PATH
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import OllamaEmbeddings
@@ -25,7 +25,8 @@ class DocVectorStore:
                                                        chunk_overlap=chunk_overlap)
         splits = text_splitter.split_documents(text)
         embeddings = OllamaEmbeddings(model=embedding_model)
-        vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
+        vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings,
+                                            persist_directory=VECTOR_DB_PATH)
         cls.vector_store = vectorstore
 
 
