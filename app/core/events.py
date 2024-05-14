@@ -1,4 +1,4 @@
-from app.services.doc_vectorstore import DocVectorStore
+from app.services.vectorstore import DocVectorStore
 
 
 def load_vectorestore():

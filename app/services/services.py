@@ -6,7 +6,7 @@ from langchain_community.llms import Ollama
 import pypdf
 from app.core.settings import MODEL
 from app.promt_template.template import template
-from app.services.doc_vectorstore import DocVectorStore
+from app.services.vectorstore import DocVectorStore
 from app.services.utils import combine_docs
 
 model = Ollama(model=MODEL, stop=['<|eot_id|>'])
