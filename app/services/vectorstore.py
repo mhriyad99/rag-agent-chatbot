@@ -1,5 +1,3 @@
-from typing import Union, Callable, Any
-
 from langchain_core.retrievers import RetrieverLike
 
 from app.core.settings import DOC_PATH, MODEL, VECTOR_DB_PATH
