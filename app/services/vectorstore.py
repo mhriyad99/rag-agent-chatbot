@@ -1,5 +1,7 @@
 from typing import Union, Callable, Any
 
+from langchain_core.retrievers import RetrieverLike
+
 from app.core.settings import DOC_PATH, MODEL, VECTOR_DB_PATH
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -10,11 +12,11 @@ from langchain_community.vectorstores import Chroma
 class DocVectorStore:
 
     @staticmethod
-    def load_vector_store(path=VECTOR_DB_PATH) -> Chroma:
+    def load_vector_store(path=VECTOR_DB_PATH) -> RetrieverLike:
         embedding = OllamaEmbeddings(model=MODEL)
         vector_store = Chroma(persist_directory=VECTOR_DB_PATH, embedding_function=embedding)
 
-        return vector_store
+        return vector_store.as_retriever()
 
     @staticmethod
     def build_vector_store(path=DOC_PATH, chunk_size=500, chunk_overlap=50,
