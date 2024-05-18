@@ -12,7 +12,7 @@ class DocVectorStore:
     @staticmethod
     def load_vector_store(path=VECTOR_DB_PATH) -> RetrieverLike:
         embedding = OllamaEmbeddings(model=MODEL)
-        vector_store = Chroma(persist_directory=VECTOR_DB_PATH, embedding_function=embedding)
+        vector_store = Chroma(persist_directory=path, embedding_function=embedding)
 
         return vector_store.as_retriever()
 
