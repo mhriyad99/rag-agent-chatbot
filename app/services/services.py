@@ -36,9 +36,7 @@ def summarizer(context, question):
 
 
 def ielts_qa(question):
-    DocVectorStore.load_store()
-    vectorstore = DocVectorStore.vector_store
-    retriever = vectorstore.as_retriever()
+    retriever = DocVectorStore.load_vector_store()
     retrieved_docs = retriever.invoke(question)
     context = combine_docs(retrieved_docs)
     prompt = PromptTemplate(input_variables=['context', 'question'], template=template)

@@ -45,7 +45,7 @@ def web_search(state: GraphState):
 
 
 # noinspection PyTypeChecker
-def generator(state: GraphState, rag_chain: RetrieverLike):
+def generate(state: GraphState, rag_chain: RetrieverLike):
     question = state["question"]
     documents = state["documents"]
 

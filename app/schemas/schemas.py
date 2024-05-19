@@ -19,6 +19,6 @@ class GraphState(BaseModel):
             documents: list of documents
     """
     question: str
-    generation: str
-    web_search: str
-    documents: List[str]
+    generation: str = None
+    web_search: str = None
+    documents: List[str] = None
