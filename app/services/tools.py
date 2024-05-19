@@ -1,8 +1,7 @@
-from langchain_core.documents import Document
-
 from app.schemas.schemas import GraphState
 from app.core.settings import COLLECTION_SCOPE
 
+from langchain_core.documents import Document
 from langchain_core.retrievers import RetrieverLike
 from langchain_community.tools.tavily_search import TavilySearchResults
 
@@ -10,7 +9,7 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 # noinspection PyTypeChecker
 def route_question(state: GraphState, router: RetrieverLike):
     if not COLLECTION_SCOPE:
-        return "web_search"
+        return "websearch"
 
     question = state["question"]
     source = router.invoke({"question": question})
@@ -18,7 +17,7 @@ def route_question(state: GraphState, router: RetrieverLike):
     if source["datasource"] == "vectorstore":
         return "vectorstore"
     else:
-        return "web_search"
+        return "websearch"
 
 
 def retrieve(state: GraphState, retriever: RetrieverLike):
@@ -54,6 +53,20 @@ def generator(state: GraphState, rag_chain: RetrieverLike):
     generation = rag_chain.invoke({"question": question, "context": context})
 
     return {"question": question, "context": context, "generation": generation}
+
+
+def decide_to_generate(state: GraphState):
+    question = state["question"]
+    search = state["websearch"]
+    documents = state["documents"]
+
+    if search == "Yes":
+        return "websearch"
+    else:
+        return "generate"
+
+
+
 
 
 
