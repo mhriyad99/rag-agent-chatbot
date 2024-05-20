@@ -9,6 +9,7 @@ from app.services.graders import grade_documents
 from app.services.tools import route_question
 from app.services.graders import grade_generation_v_documents_and_question
 
+
 workflow = StateGraph(GraphState)
 
 workflow.add_node("websearch", web_search)
@@ -46,9 +47,8 @@ workflow.add_conditional_edges(
 
 
 app = workflow.compile()
-inputs = {"question": "What is result of bayern munich vs real madrid"}
+inputs = {"question": "What is the result of bayern munich vs real madrid 2024 UCL?"}
 for output in app.stream(inputs):
-    print("output", output)
     for key, value in output.items():
         print(f"Finished running: {key}:")
 print(value["generation"])

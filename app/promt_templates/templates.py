@@ -1,3 +1,5 @@
+from typing import List
+
 from langchain.prompts import PromptTemplate
 from app.core.settings import COLLECTION_SCOPE
 

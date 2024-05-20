@@ -1,6 +1,5 @@
-from typing import List
+from typing import List, TypedDict
 
-from fastapi import UploadFile
 from pydantic import BaseModel
 
 
@@ -8,7 +7,7 @@ class Query(BaseModel):
     query: str
 
 
-class GraphState(BaseModel):
+class GraphState(TypedDict):
     """
         Represents the state of our graph.
 
@@ -19,6 +18,6 @@ class GraphState(BaseModel):
             documents: list of documents
     """
     question: str
-    generation: str = None
-    web_search: str = None
-    documents: List[str] = None
+    generation: str
+    web_search: str
+    documents: List[str]
