@@ -2,9 +2,9 @@ from app.schemas.schemas import GraphState
 from app.core.settings import COLLECTION_SCOPE
 from app.services.question_router import get_question_router
 from app.services.generator import get_response_generator
+from app.services.vectorstore import DocVectorStore
 
 from langchain_core.documents import Document
-from langchain_core.retrievers import RetrieverLike
 from langchain_community.tools.tavily_search import TavilySearchResults
 
 
@@ -24,8 +24,9 @@ def route_question(state: GraphState):
         return "websearch"
 
 
-def retrieve(state: GraphState, retriever: RetrieverLike):
+def retrieve(state: GraphState):
     question = state["question"]
+    retriever = DocVectorStore.load_vector_store()
     documents = retriever.invoke(question)
 
     return {"documents": documents, "question": question}
@@ -63,7 +64,7 @@ def generate(state: GraphState):
 
 def decide_to_generate(state: GraphState):
     question = state["question"]
-    search = state["websearch"]
+    search = state["web_search"]
     documents = state["documents"]
 
     if search == "Yes":

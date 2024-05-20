@@ -47,7 +47,7 @@ workflow.add_conditional_edges(
 
 
 app = workflow.compile()
-inputs = {"question": "What is the result of bayern munich vs real madrid 2024 UCL?"}
+inputs = {"question": "What is anthropic principle?"}
 for output in app.stream(inputs):
     for key, value in output.items():
         print(f"Finished running: {key}:")
