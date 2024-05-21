@@ -48,6 +48,7 @@ def web_search(state: GraphState):
 
     return {"question": question, "documents": documents}
 
+
 # noinspection PyTypeChecker
 def generate(state: GraphState):
     question = state["question"]
