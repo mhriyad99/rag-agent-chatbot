@@ -16,7 +16,7 @@ Queston: {question}
 temp_llama_question_router = PromptTemplate(
     template=f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|> You are an expert at routing a 
       user question to a vectorstore or web search. Use the vectorstore for questions on 
-      {COLLECTION_SCOPE}. You do not need to be stringent with the keywords 
+      {COLLECTION_SCOPE} or related to them. You do not need to be stringent with the keywords 
       in the question related to these topics. Otherwise, use web-search. Give a binary choice 
       'web_search' 
       or 'vectorstore' based on the question. Return the a JSON with a single key 'datasource' and 

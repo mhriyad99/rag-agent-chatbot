@@ -45,10 +45,3 @@ workflow.add_conditional_edges(
     },
 )
 
-
-app = workflow.compile()
-inputs = {"question": "What is anthropic principle?"}
-for output in app.stream(inputs):
-    for key, value in output.items():
-        print(f"Finished running: {key}:")
-print(value["generation"])

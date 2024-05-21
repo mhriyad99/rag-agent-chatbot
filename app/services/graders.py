@@ -48,14 +48,15 @@ def grade_documents(state: GraphState):
 
         if grade.lower() == "yes":
             filtered_docs.append(d)
-        else:
-            web_search = "Yes"
-            continue
+
+    if len(filtered_docs) == 0:
+        web_search = "Yes"
 
     return {"documents": filtered_docs, "question": question, "web_search": web_search}
 
 
 def grade_generation_v_documents_and_question(state: GraphState):
+    print("-----------hallucination checker----------------")
     question = state["question"]
     documents = state["documents"]
     generation = state["generation"]
@@ -69,7 +70,7 @@ def grade_generation_v_documents_and_question(state: GraphState):
     grade = score["score"]
 
     # Check hallucination
-    if grade == "yes":
+    if grade.lower() == "yes":
         # Check question-answering
         score = answer_grader.invoke({"question": question, "generation": generation})
         grade = score["score"]
