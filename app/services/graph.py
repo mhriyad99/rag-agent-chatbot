@@ -58,11 +58,5 @@ def get_workflow(
     return app
 
 
-app = get_workflow(web_search, retrieve, grade_documents, generate, route_question,
-                   decide_to_generate, grade_generation_v_documents_and_question)
 
-inputs = {"question": "What is anthropic principle?"}
-for output in app.stream(inputs):
-    for key, value in output.items():
-        print(f"Finished running: {key}:")
-print(value["generation"])
+

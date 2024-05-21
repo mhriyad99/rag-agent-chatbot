@@ -56,7 +56,6 @@ def grade_documents(state: GraphState):
 
 
 def grade_generation_v_documents_and_question(state: GraphState):
-    print("-----------hallucination checker--------------------")
     question = state["question"]
     documents = state["documents"]
     generation = state["generation"]
@@ -67,7 +66,6 @@ def grade_generation_v_documents_and_question(state: GraphState):
     score = hallucination_grader.invoke(
         {"documents": documents, "generation": generation}
     )
-    print(score)
     grade = score["score"]
 
     # Check hallucination
