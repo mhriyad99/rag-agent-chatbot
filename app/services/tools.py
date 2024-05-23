@@ -53,12 +53,19 @@ def web_search(state: GraphState):
 def generate(state: GraphState):
     question = state["question"]
     documents = state["documents"]
+    iteration = state["iteration"]
+
+    if iteration is None:
+        iteration = 1
+    else:
+        iteration += 1
 
     rag_chain = get_response_generator()
     context = [d.page_content for d in documents]
     generation = rag_chain.invoke({"question": question, "context": context})
 
-    return {"question": question, "documents": documents, "generation": generation}
+    return {"question": question, "documents": documents, "generation": generation,
+            "iteration": iteration}
 
 
 def decide_to_generate(state: GraphState):

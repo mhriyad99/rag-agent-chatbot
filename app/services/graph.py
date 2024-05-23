@@ -44,6 +44,7 @@ def get_workflow():
             "not supported": "generate",
             "useful": END,
             "not useful": "websearch",
+            "limit exceeded": END,
         },
     )
 
