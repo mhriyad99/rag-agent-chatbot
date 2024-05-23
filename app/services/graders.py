@@ -1,14 +1,12 @@
 from app.promt_templates.templates import temp_llama_retrival_grader, \
     temp_llama_hallucination_grader, temp_llama_answer_grader
-from app.core.settings import MODEL
-from langchain_community.chat_models import ChatOllama
 from langchain_core.output_parsers import JsonOutputParser
 
 from app.schemas.schemas import GraphState
+from app.services.llm import llm
 
 
 def get_retrieval_grader():
-    llm = ChatOllama(model=MODEL, fomat="json", temperature=0)
     prompt = temp_llama_retrival_grader
     retrieval_grader = prompt | llm | JsonOutputParser()
 
@@ -16,7 +14,6 @@ def get_retrieval_grader():
 
 
 def get_hallucination_grader():
-    llm = ChatOllama(model=MODEL, format="json", temperature=0)
     prompt = temp_llama_hallucination_grader
     hallucination_grader = prompt | llm | JsonOutputParser()
 
@@ -24,7 +21,6 @@ def get_hallucination_grader():
 
 
 def get_answer_grader():
-    llm = ChatOllama(model=MODEL, format="json", temperature=0)
     prompt = temp_llama_answer_grader
     answer_grader = prompt | llm | JsonOutputParser()
 
@@ -79,3 +75,5 @@ def grade_generation_v_documents_and_question(state: GraphState):
             return "not useful"
     else:
         return "not supported"
+
+

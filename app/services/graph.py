@@ -10,15 +10,8 @@ from app.services.graders import grade_documents
 from app.services.tools import route_question
 from app.services.graders import grade_generation_v_documents_and_question
 
-def get_workflow(
-        web_search: RetrieverLike,
-        retrieve: RetrieverLike,
-        grade_documents: RetrieverLike,
-        generate: RetrieverLike,
-        route_question: RetrieverLike,
-        decide_to_generate: RetrieverLike,
-        grade_generation_v_documents_and_question: RetrieverLike
-):
+
+def get_workflow():
     workflow = StateGraph(GraphState)
 
     workflow.add_node("websearch", web_search)
@@ -58,5 +51,14 @@ def get_workflow(
     return app
 
 
+# app = get_workflow()
+# inputs = {"question": "score card of the match played between bangladesh and USA"}
+# for output in app.stream(inputs):
+#     for key, value in output.items():
+#         print(f"Finished running: {key}:")
+# print(value["generation"])
 
-
+async def chat_graph(msg, func):
+    app = get_workflow()
+    output = app.invoke(msg)
+    await func(output["generation"])

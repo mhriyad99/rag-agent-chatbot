@@ -9,6 +9,7 @@ from store import vector_store, load_json_context
 from app.schemas.schemas import Query
 from app.services.services import get_response, summarizer, pdf_reader, ielts_qa
 from QA import chat
+from app.services.graph import chat_graph
 import tempfile
 
 app = FastAPI()
@@ -91,9 +92,10 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
     try:
         while True:
             data = await websocket.receive_text()
+            print("data", data)
             # await manager.broadcast(json.dumps({"client_id": client_id, "text": data}))
             # print(data)
-            await chat(data, broadcast)
+            await chat_graph({"question": data}, broadcast)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         print(f"disconnected {client_id}")

@@ -40,10 +40,12 @@ temp_llama_retrival_grader = PromptTemplate(
 
 temp_llama_hallucination_grader = PromptTemplate(
         template=""" <|begin_of_text|><|start_header_id|>system<|end_header_id|> You are a grader assessing whether 
-        an answer is grounded in / supported by a set of facts. Give a binary 'yes' or 'no' score to indicate 
-        whether the answer is grounded in / supported by a set of facts. Provide the binary score as a JSON with a 
-        single key 'score' and no preamble or explanation. Just give answer with key 'score' 
-        strictly. 
+        an answer is grounded in / supported by the information in the documents. Give a binary 
+        'yes' or 'no' score to indicate whether the answer is grounded in / supported by the 
+        documents. Provide the binary score as a JSON with a single key 'score' and no 
+        preamble or explanation. Strictly give the answer in json 
+        with just one key named 'score'. 
+         
         <|eot_id|><|start_header_id|>user<|end_header_id|>
         Here are the facts:
         \n ------- \n

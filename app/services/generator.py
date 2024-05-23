@@ -1,14 +1,24 @@
-from app.promt_templates.templates import temp_llama_generation
-from app.core.settings import MODEL
+from langchain_core.documents import Document
 
-from langchain_community.chat_models import ChatOllama
+from app.promt_templates.templates import temp_llama_generation
+from app.services.llm import gen_llm
+
 from langchain_core.output_parsers import StrOutputParser
 
 
 def get_response_generator():
     prompt = temp_llama_generation
-    llm = ChatOllama(model=MODEL, temperature=0)
-    chain = prompt | llm | StrOutputParser()
+    chain = prompt | gen_llm | StrOutputParser()
 
     return chain
 
+
+# text = "slfkjsdlfkjdlksfj"
+# text = Document(page_content=text)
+# document = [text]
+# text = "lskjsdlkfjdklsfjslkdfjslkdjfweoir"
+# text = Document(page_content=text)
+# document.append(text)
+# print(document)
+# for d in document:
+#     print(d)

@@ -38,8 +38,8 @@ def web_search(state: GraphState):
 
     search = TavilySearchResults(k=3)
     web_text = search.invoke({"query": question})
-    web_results = "\n".join([d["content"] for d in web_text])
-    web_results = Document(page_content=web_results)
+    web_text = "\n".join([d["content"] for d in web_text])
+    web_results = Document(page_content=web_text)
 
     if documents is not None:
         documents.append(web_results)
@@ -55,11 +55,10 @@ def generate(state: GraphState):
     documents = state["documents"]
 
     rag_chain = get_response_generator()
-
     context = [d.page_content for d in documents]
     generation = rag_chain.invoke({"question": question, "context": context})
 
-    return {"question": question, "documents": context, "generation": generation}
+    return {"question": question, "documents": documents, "generation": generation}
 
 
 def decide_to_generate(state: GraphState):
