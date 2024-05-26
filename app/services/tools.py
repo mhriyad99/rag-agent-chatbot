@@ -36,7 +36,7 @@ def web_search(state: GraphState):
     question = state["question"]
     documents = state["documents"]
 
-    search = TavilySearchResults(k=3)
+    search = TavilySearchResults(max_results=3)
     web_text = search.invoke({"query": question})
     web_text = "\n".join([d["content"] for d in web_text])
     web_results = Document(page_content=web_text)
