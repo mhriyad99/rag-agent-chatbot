@@ -12,6 +12,7 @@ from QA import chat
 from app.services.graph import chat_graph
 import tempfile
 
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")

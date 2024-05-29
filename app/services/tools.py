@@ -1,11 +1,25 @@
 from app.schemas.schemas import GraphState
 from app.core.settings import COLLECTION_SCOPE
-from app.services.question_router import get_question_router
+from app.services.question_router import get_question_router, get_question_rephraser
 from app.services.generator import get_response_generator
 from app.services.vectorstore import DocVectorStore
+from app.services.global_state import history
 
 from langchain_core.documents import Document
 from langchain_community.tools.tavily_search import TavilySearchResults
+
+
+def question_rephraser(state: GraphState):
+    question = state["question"]
+
+    if len(history) > 0:
+        chat_history = history
+        chain = get_question_rephraser()
+        rephrased_question = chain.invoke({"chat_history": chat_history, "question": question})
+        question = rephrased_question["output"]
+        return {"question": question, "chat_history": chat_history}
+
+    return {"question": question}
 
 
 # noinspection PyTypeChecker
@@ -79,8 +93,17 @@ def decide_to_generate(state: GraphState):
         return "generate"
 
 
-
-
-
-
-
+def store_history(state: GraphState):
+    question = state["question"]
+    generation = state["generation"]
+    chat_history = state["chat_history"]
+    print(chat_history)
+    human = "Human: " + question + "\n"
+    ai = "AI Assistant: " + generation + "\n"
+    if not chat_history:
+        chat_history = [human, ai]
+    else:
+        chat_history.append(human)
+        chat_history.append(ai)
+    print("chat_history", chat_history)
+    return {"chat_history": chat_history}

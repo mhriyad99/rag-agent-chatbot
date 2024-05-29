@@ -76,3 +76,17 @@ temp_llama_generation = PromptTemplate(
     Answer: <|eot_id|><|start_header_id|>assistant<|end_header_id|>""",
     input_variables=["question", "document"],
 )
+
+temp_llama_question_rephrase = PromptTemplate(
+    template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|> You are an 
+    assistant who's responsibility is to rephrase users question based on the chat history, 
+    if the question is relevant to the previous conversation. Your task is to identify and replace
+    anaphoric expressions (pronouns like "it", "they", etc.) in the follow-up question with the
+    entities they refer to from the chat history if the question is relevant to the chat 
+    history. Just rephrase the question and give a json output with key 'output' and rephrased 
+    question as the value and no preamble or explanation.<|eot_id|><|start_header_id|>user<|end_header_id|>
+    \n
+    Chat History: {chat_history}
+    Question: {question} <|eot_id|><|start_header_id|>assistant<|end_header_id|>""",
+    input_variables=["chat_history", "question"]
+)

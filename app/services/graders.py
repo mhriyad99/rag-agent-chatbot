@@ -56,8 +56,9 @@ def grade_generation_v_documents_and_question(state: GraphState):
     documents = state["documents"]
     generation = state["generation"]
     iteration = state["iteration"]
-
-    if iteration >= 2:
+    print(iteration)
+    if iteration >= 3:
+        print("limit exceeded")
         return "limit exceeded"
 
     hallucination_grader = get_hallucination_grader()

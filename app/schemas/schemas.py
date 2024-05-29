@@ -22,3 +22,4 @@ class GraphState(TypedDict):
     web_search: str
     documents: List[str]
     iteration: int
+    chat_history: List[str]
