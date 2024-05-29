@@ -68,6 +68,6 @@ def get_workflow():
 async def chat_graph(msg, func):
     app = get_workflow()
     output = app.invoke(msg)
-    history.extend(output["chat_history"])
+    history.extend(output["chat_history"][-2:])
     # print("history", history)
     await func(output["generation"])

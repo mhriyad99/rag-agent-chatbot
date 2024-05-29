@@ -67,6 +67,7 @@ def web_search(state: GraphState):
 def generate(state: GraphState):
     question = state["question"]
     documents = state["documents"]
+    chat_history = state["chat_history"]
     iteration = state["iteration"]
 
     if iteration is None:
@@ -76,7 +77,8 @@ def generate(state: GraphState):
 
     rag_chain = get_response_generator()
     context = [d.page_content for d in documents]
-    generation = rag_chain.invoke({"question": question, "context": context})
+    generation = rag_chain.invoke({"question": question, "context": context,
+                                   "chat_history": chat_history})
 
     return {"question": question, "documents": documents, "generation": generation,
             "iteration": iteration}
@@ -97,7 +99,6 @@ def store_history(state: GraphState):
     question = state["question"]
     generation = state["generation"]
     chat_history = state["chat_history"]
-    print(chat_history)
     human = "Human: " + question + "\n"
     ai = "AI Assistant: " + generation + "\n"
     if not chat_history:

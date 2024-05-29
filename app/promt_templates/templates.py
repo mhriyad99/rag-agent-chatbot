@@ -69,12 +69,14 @@ temp_llama_answer_grader = PromptTemplate(
 
 temp_llama_generation = PromptTemplate(
     template="""<|begin_of_text|><|start_header_id|>system<|end_header_id|> You are an assistant for question-answering tasks. 
-    Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. 
+    Use the following pieces of retrieved context and also the chat history if exists to answer 
+    the question.If you don't know the answer, just say that you don't know. 
     Use three sentences maximum and keep the answer concise <|eot_id|><|start_header_id|>user<|end_header_id|>
-    Question: {question} 
+    Question: {question}
+    Chat History: {chat_history} 
     Context: {context} 
     Answer: <|eot_id|><|start_header_id|>assistant<|end_header_id|>""",
-    input_variables=["question", "document"],
+    input_variables=["question", "document", "chat_history"],
 )
 
 temp_llama_question_rephrase = PromptTemplate(
