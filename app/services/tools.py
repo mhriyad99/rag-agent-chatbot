@@ -108,3 +108,4 @@ def store_history(state: GraphState):
         chat_history.append(ai)
     print("chat_history", chat_history)
     return {"chat_history": chat_history}
+
